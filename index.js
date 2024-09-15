@@ -43,8 +43,10 @@ function displayMenuItems(menu) {
             listItem.textContent = items[i];
 
             // Attach a click event listener to the list item to add it to the order
+            listItem.addEventListener('click', () => addToOrder(items[i]));
 
             // Append the list item to the list of items
+            itemsList.appendChild(listItem);
         }
    }           
 }
