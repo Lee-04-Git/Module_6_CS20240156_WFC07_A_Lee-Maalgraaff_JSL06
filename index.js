@@ -33,23 +33,24 @@ function displayMenuItems(menu) {
         menuContainer.appendChild(itemsList);
 
         // Loop through the items in the category and create list items
-        const items = menu[category];
-        for (let i = 0; i < items.length; i++) {
+        const items = menu[categoryName]; 
+        for (let j = 0;  j < items.length; j++) {
             
             // Create a list item element
             const listItem = document.createElement('li');
 
             // Set the text content of the list item element to the item name
-            listItem.textContent = items[i];
+            listItem.textContent = items[j];
 
             // Attach a click event listener to the list item to add it to the order
-            listItem.addEventListener('click', () => addToOrder(items[i]));
+            listItem.addEventListener('click', () => addToOrder(items[j]));
 
             // Append the list item to the list of items
             itemsList.appendChild(listItem);
         }
    }           
 }
+displayMenuItems(menu);
 
 // Callback function for adding an item to the order
 function addToOrder(itemName) {
