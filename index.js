@@ -5,81 +5,91 @@ const menu = {
     Desserts: ["Tiramisu", "Cheesecake"]
 };
 
+// Object to keep track of items and their quantities in the order
+const cart = {};
+
 // Function to display menu items by category
 function displayMenuItems(menu) {
-    // Get the menu container element from the HTML
     const menuContainer = document.getElementById('menu');
-
-    // Loop through each category and its items in the menu object
     const categories = Object.keys(menu);
+
     for (let i = 0; i < categories.length; i++) {
-
-        // Get the current category name
         const categoryName = categories[i];
-
-        // Create an element to represent the category
         const categoryElement = document.createElement('h3');
-        
-        // Set the text content of the category element to the category name
         categoryElement.textContent = categoryName;
-
-        // Append the category element to the menu container
         menuContainer.appendChild(categoryElement);
 
-        // Create an element to represent a list of items
         const itemsList = document.createElement('ul');
-
-        // Append a list of items element to the menu container
         menuContainer.appendChild(itemsList);
 
-        // Loop through the items in the category and create list items
-        const items = menu[categoryName]; 
-        for (let j = 0;  j < items.length; j++) {
-            
-            // Create a list item element
+        const items = menu[categoryName];
+        for (let j = 0; j < items.length; j++) {
             const listItem = document.createElement('li');
-
-            // Set the text content of the list item element to the item name
             listItem.textContent = items[j];
-
-            // Attach a click event listener to the list item to add it to the order
             listItem.addEventListener('click', () => addToOrder(items[j]));
-
-            // Append the list item to the list of items
             itemsList.appendChild(listItem);
         }
-   }           
+    }
 }
 
-// Callback function for adding an item to the order
+// Function to add an item to the order
 function addToOrder(itemName) {
-    // Get the order items list and the order total element from the HTML
+    if (cart[itemName]) {
+        cart[itemName].quantity += 1;
+    } else {
+        cart[itemName] = { price: 10.00, quantity: 1 };
+    }
+    updateOrderUI();
+}
+
+// Function to remove an item from the order
+function removeFromOrder(itemName) {
+    if (cart[itemName]) {
+        cart[itemName].quantity -= 1;
+        if (cart[itemName].quantity <= 0) {
+            delete cart[itemName];
+        }
+    }
+    updateOrderUI();
+}
+
+// Function to update the UI for the order
+function updateOrderUI() {
     const orderItemsList = document.getElementById('order-items');
     const orderTotalElement = document.getElementById('order-total');
+    orderItemsList.innerHTML = ''; // Clear the list
 
-    // Create a list item for the order
-    const listItem = document.createElement('li');
+    let total = 0;
 
-    // Set the text content of the list item to the item name
-    listItem.textContent = itemName;
+    for (const itemName in cart) {
+        const { price, quantity } = cart[itemName];
+        total += price * quantity;
 
-    // Append the list item to the order items list
-    orderItemsList.appendChild(listItem);
+        const listItem = document.createElement('li');
+        listItem.textContent = `${itemName} x${quantity}`;
 
-    // Calculate and update the total price
-    const itemPrice = 10.00; // Assume each item costs 10.00
-    const currentTotal = parseFloat(orderTotalElement.textContent.replace('R', '')) || 0;
-    const newTotal = currentTotal + itemPrice;
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Remove';
+        deleteButton.style.marginLeft = '10px';
+        deleteButton.style.backgroundColor = '#ff4d4d';
+        deleteButton.style.border = 'none';
+        deleteButton.style.color = '#fff';
+        deleteButton.style.cursor = 'pointer';
+        deleteButton.style.padding = '5px 10px';
+        deleteButton.style.borderRadius = '5px';
+        deleteButton.addEventListener('click', () => removeFromOrder(itemName));
 
-    // Update the text content of the order total element with the new total
-    orderTotalElement.textContent = `R${newTotal.toFixed(2)}`;
+        listItem.appendChild(deleteButton);
+        orderItemsList.appendChild(listItem);
+    }
+
+    orderTotalElement.textContent = `R${total.toFixed(2)}`;
 }
 
 // Function to initialize the menu system
 function initMenuSystem(menu) {
-    // Call the function to display menu items
     displayMenuItems(menu);
 }
 
-// Start the menu system by calling the init function
+// Start the menu system
 initMenuSystem(menu);
