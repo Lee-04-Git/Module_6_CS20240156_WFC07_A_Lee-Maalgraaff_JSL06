@@ -1,8 +1,8 @@
-// Sample menu data (Consider fetching this data from a server in a real-world scenario)
+// Sample menu data
 const menu = {
-    Starters: ["Garlic Bread", "Bruschetta"],
-    MainCourses: ["Margherita Pizza", "Spaghetti Carbonara"],
-    Desserts: ["Tiramisu", "Cheesecake"]
+    Starters: [{ name: "Garlic Bread", price: 12 }, { name: "Bruschetta", price: 15 }],
+    MainCourses: [{ name: "Margherita Pizza", price: 60 }, { name: "Spaghetti Carbonara", price: 36 }],
+    Desserts: [{ name: "Tiramisu", price: 28 }, { name: "Cheesecake", price: 32 }]
 };
 
 // Object to keep track of items and their quantities in the order
@@ -25,19 +25,19 @@ function displayMenuItems(menu) {
         const items = menu[categoryName];
         for (let j = 0; j < items.length; j++) {
             const listItem = document.createElement('li');
-            listItem.textContent = items[j];
-            listItem.addEventListener('click', () => addToOrder(items[j]));
+            listItem.textContent = `${items[j].name} - R${items[j].price}`;
+            listItem.addEventListener('click', () => addToOrder(items[j].name, items[j].price));
             itemsList.appendChild(listItem);
         }
     }
 }
 
 // Function to add an item to the order
-function addToOrder(itemName) {
+function addToOrder(itemName, itemPrice) {
     if (cart[itemName]) {
         cart[itemName].quantity += 1;
     } else {
-        cart[itemName] = { price: 10.00, quantity: 1 };
+        cart[itemName] = { price: itemPrice, quantity: 1 };
     }
     updateOrderUI();
 }
@@ -66,7 +66,7 @@ function updateOrderUI() {
         total += price * quantity;
 
         const listItem = document.createElement('li');
-        listItem.textContent = `${itemName} x${quantity}`;
+        listItem.textContent = `${itemName} x${quantity} - R${(price * quantity).toFixed(2)}`;
 
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Remove';
@@ -83,7 +83,7 @@ function updateOrderUI() {
         orderItemsList.appendChild(listItem);
     }
 
-    orderTotalElement.textContent = `R${total.toFixed(2)}`;
+    orderTotalElement.textContent = `${total.toFixed(2)}`;
 }
 
 // Function to initialize the menu system
